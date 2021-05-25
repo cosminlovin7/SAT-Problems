@@ -1,0 +1,105 @@
+Cosmin-Viorel Lovin 325CD - TEMA 2 AA.
+
+Task 1: k color to SAT
+Pentru rezolvarea acestui task am generat o reducere a k color to SAT.
+Am generat 3 tipuri de clauze dupa cum urmeaza.
+Fiecarui nod ii sunt asignate nr de culori variabile.
+In total vor vi nr de culori * nr de noduri variabile.
+Clauzele de tip 1 verifica urmatoarul lucru intre nodurile cu legaturi
+Daca nodul x are culoarea 1, nodul y care e legat de x nu poate avea
+tot culoarea 1.
+Sunt nr. de legaturi * nr de culori disponibile clauze de acest tip.
+
+Clauzele de tip 2 verifica daca un nod are cel putin o culoare asignata.
+Sunt nr de noduri clauze de acest tip.
+
+Clauzele de tip 3 verifica ca daca are o singura culoare asignata.
+Sunt nr de noduri * Combinari(nr de culori, 2) clauze de acest tip.
+
+Complexitatea pentru generarea clauzelor de tip 1 este:
+O(nr de relatii * nr de culori)
+
+Complexitatea pentru generarea clauzelor de tip 2 este:
+O(nr de variabile)
+
+Complexitatea pentru generarea clauzelor de tip 3 este:
+O(nr de familii * Combinari(nr de culori, 2))
+
+Deci complexitatea functiei de generare a input-ului pentru oracol este:
+O(nr de relatii * nr de culori + nr de variabile + nr de familii 
+* Combinari(nr de culori, 2)).
+
+Task 2: k clique to SAT
+Pentru rezolvarea acestui task am folosit reducerea data in enuntul
+problemei. Asadar, sunt generate 
+numberOfFamilies clauze de tip A.
+numberOfFamilies * (numberOfFamilies - 1)
+* (Combinari(numberOfFamilies, 2) - numberOfRelationships) clauze de tip B
+numberOfFamilies * Combinari(dimensiuneaFamiliei, 2) + dimensiuneaFamiliei 
+* Combinari(numberOfFamilies, 2) clauze de tip C
+
+Complexitatea pentru generarea clauzelor de tip A este:
+O(numberOfVariables / familyDimension * familyDimension) = O(numberOfVariables)
+
+Complexitatea pentru generarea clauzelor de tip B este:
+O(numberOfNonRelationships * familyDimension ^ 2)
+
+Complexitatea pentru generarea clauzelor de tip C este:
+O(numberOfFamilies * Combinari(familyDimension, 2))
+Deci in total, complexitatea functiei generateClauses() ar fi:
+O(numberOfVariables + numberOfNonRelationships * familyDimension ^ 2 + 
+numberOfFamilies * Combinari(familyDimension, 2)).
+
+
+Task 3: vertex cover to clique.
+Practic pentru rezolvarea acestui task trebuie sa gasim un vertex
+cover cat mai mic. Ideea este sa reducem vertex cover la k clique.
+Fie un graf G(V,E). Daca reusim sa gasim o clique in complementul
+grafului G, inseamna ca celelalte noduri care nu fac parte din clica
+formeaza un vertex cover in graful G, iar problema noastra a fost re-
+zolvata. Ne vom folosi de acest lucru pentru a genera reducerea  de la 
+vertex cover la clique.
+Cu cat clica din complementul grafului G este mai mare, cu atat
+vertex cover-ul in graful G este mai mic. 
+Intai generam input-ul pentru clica transformand-ul pe cel de la 
+vertex cover. Vom dori sa obtinem toate combinatiile de muchii care nu 
+se afla in E.
+Complexitatea functiei generateNonEdges() este urmatoarea.
+In total sunt Combinari(numberOfFamilies, 2) muchii. Deci complexitatea
+este O(Combinari(numberOfFamilies, 2)).
+Complexitatea functiei reduceToTask2() este 
+O(Combinari(numberOfFamilies,2) - numberOfRelationships).
+Complexitatea functiei extractAnswerFromTask2() este
+O(numberOfFamilies).
+Complexitatea functiei writeAnswer() este
+O(numbarul de arestari).
+
+In interiorul functiei solve() se fac mai multe apeluri catre task2 pentru
+a rezolva k-clique cu input-ul abia generat. Cum am spus si mai sus, incepem
+sa cautam o clica de dimensiunea numarului de familii scazand in cazul in care 
+programul intoarce FALSE. Cand programul intoarce True prima data inseamna ca 
+a gasit cea mai mare clica posibila in complementul grafului G si implicit cel 
+mai mic vertex cover din graful G. 
+
+Bonus: vertex cover to MAX-SAT.
+Pentru rezolvarea acestui task avem nevoie de a gasit greutatile pentru
+fiecare clauza. Implementarea pe care am ales-o, se foloseste de numarul
+de relatii + numarul de familiii clauze si numar de familii variabile pentru
+a rezolva acest task. 
+Practic avem doua tipuri de clauze:
+Clauze de tip A(soft):
+fiecare nod din grafic apartine sau nu apartine vertex-cover.
+
+Clauze de tip B(hard):
+Pentru fiecare relatie din grafic, cel putin un nod apartine vertex-cover.
+
+Avand in vedere ca sunt numar de familii clauze soft => 
+suma = numar de familii + 1.
+Deci greutatea pentru fiecare clauza hard va fi = suma.
+
+In continuare, problema se rezolva la fel ca celelalte task-uri. Se genereaza
+fisierul de input pentru SAT. (Complexitate O(nr.familii + nr de relatii)).
+Raspunsul de la SAT este analizat. 
+Variabila pozitiva => nodul respectiv face parte din vertex cover.
+Afisam rezultatul in out.
+
